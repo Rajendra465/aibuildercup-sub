@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InScene — AI Builder Cup 2026 Submission</title>
+<meta name="description" content="InScene pitch deck. Use arrow keys or click to navigate; press N for speaker notes, F for full screen; print to save as PDF.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#05070F;overflow:hidden}
+.slide{position:absolute;left:50%;top:50%;width:1920px;height:1080px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));visibility:hidden;opacity:0;transition:opacity .35s ease}
+.slide.active{visibility:visible;opacity:1}
+.slide h1,.slide h2,.slide h3{font-weight:600}
+.slide ul{padding-left:1.1em}
+.slide table{width:100%;border-collapse:collapse}
+.slide th,.slide td{padding:.35em .6em;text-align:left;border-bottom:1px solid rgba(128,128,128,.28)}
+.slide th{font-weight:700}
+.slide aside.notes{display:none}
+.ui{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;
+  font:500 14px/1 'DM Sans',Arial,sans-serif;color:#C8C4D6;background:rgba(11,16,32,.75);padding:8px 12px;border-radius:999px;z-index:5}
+.ui button{all:unset;cursor:pointer;padding:4px 10px;border-radius:999px;color:#F5F2EA}
+.ui button:hover,.ui button:focus-visible{background:#232845}
+#notes{position:fixed;right:16px;top:16px;width:min(420px,calc(100vw - 32px));max-height:60vh;overflow:auto;display:none;
+  font:400 15px/1.5 'DM Sans',Arial,sans-serif;color:#F5F2EA;background:rgba(11,16,32,.92);padding:16px;border-radius:12px;z-index:6}
+body.show-notes #notes{display:block}
+@page{size:1920px 1080px;margin:0}
+@media print{
+  html,body{overflow:visible;background:none}
+  .slide{position:relative;left:0;top:0;transform:none;visibility:visible;opacity:1;break-after:page}
+  .ui,#notes{display:none!important}
+}
+</style>
+</head>
+<body>
+<section class="slide" id="cover" data-transition="fade" style="background:linear-gradient(135deg, #0B1020 0%, #1B1F3B 70%, #3A2A1A 100%);color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:center;gap:36px">
+<p style="font-size:28px;letter-spacing:5px;text-transform:uppercase;color:#F2A541;font-weight:700">AI Builder Cup 2026 · Media, Content &amp; Digital Experiences</p>
+<h1 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:180px;font-weight:700;line-height:1.0;letter-spacing:-4px">InScene</h1>
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:56px;font-weight:500;color:#F2A541">The ad is in the scene.</p>
+<p style="font-size:36px;line-height:1.35;color:#C8C4D6;width:1250px">AI-rendered product placement that adapts to every viewer, built on Google Cloud with Gemini.</p>
+<div style="display:flex;gap:20px">
+<p style="font-size:28px;background:#232845;padding:14px 28px;border-radius:999px;color:#E6E2F0">Team: [Team name]</p>
+<p style="font-size:28px;background:#232845;padding:14px 28px;border-radius:999px;color:#E6E2F0">Lead: Rajendra Sarpal</p>
+<p style="font-size:28px;background:#232845;padding:14px 28px;border-radius:999px;color:#E6E2F0">Members: [Names]</p>
+</div>
+<aside class="notes">Introduce the team and the one-liner: InScene renders a different, relevant, local ad into the scene for every viewer, with no ad breaks, while the director stays in control.</aside>
+</section>
+
+<section class="slide" id="problem" data-transition="fade" style="background:#F5F2EA;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#A8611A;font-weight:700">Problem statement</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">Video ads interrupt viewers, ignore context and can’t prove they were seen</h2>
+</div>
+<div style="display:flex;gap:28px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;padding:44px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+<h3 style="font-size:40px;font-weight:700">They interrupt</h3>
+<p style="font-size:30px;line-height:1.4;color:#4B5068">Pre-roll and mid-roll breaks stop the story. Viewers skip, block, or pay to avoid them.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;padding:44px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+<h3 style="font-size:40px;font-weight:700">They ignore context</h3>
+<p style="font-size:30px;line-height:1.4;color:#4B5068">Product placement is shot once and shown to everyone, in every country and language, forever.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;padding:44px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+<h3 style="font-size:40px;font-weight:700">They can’t prove impact</h3>
+<p style="font-size:30px;line-height:1.4;color:#4B5068">Brands can’t see how visible a placement was, who saw it, or whether it fit the scene.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#7A7468">InScene · 02</p>
+<aside class="notes">Three groups lose: viewers get interrupted, creators leave money on the table because their scenes are sold once, and brands can’t target or measure placements.</aside>
+</section>
+
+<section class="slide" id="solution" data-transition="fade" style="background:#0B1020;color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#F2A541;font-weight:700">Our solution</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">Gemini repaints the billboard in the scene for each viewer</h2>
+</div>
+<table style="font-size:30px;color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif">
+<tr style="background:#1C2240"><th style="width:26%;color:#C8C4D6;padding:18px"> </th><th style="width:34%;color:#C8C4D6">Video ads today</th><th style="width:40%;color:#F2A541">With InScene</th></tr>
+<tr><td>Where ads live</td><td>Breaks between scenes</td><td>Inside the scene, on real surfaces</td></tr>
+<tr style="background:#131833"><td>Who sees what</td><td>One ad for everyone</td><td>A brand per viewer, in their language</td></tr>
+<tr><td>Safety</td><td>Manual review</td><td>Gemini scene check plus director rules</td></tr>
+<tr style="background:#131833"><td>Measurement</td><td>Impressions only</td><td>Exposure score: size, time, legibility</td></tr>
+<tr><td>Interaction</td><td>A skip button</td><td>Pause to see the product and shop</td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8F8BA8">InScene · 03</p>
+<aside class="notes">The story, actors and camera never change. Only the surfaces the director approved are re-rendered, and if a render isn’t ready or fails a check, the original shot plays.</aside>
+</section>
+
+<section class="slide" id="usp" data-transition="fade" style="background:#F5F2EA;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#A8611A;font-weight:700">What makes it different</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">Four things generic AI ad insertion doesn’t do</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+<div style="display:flex;gap:24px;background:#FFFDF8;padding:40px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+<div style="display:flex;flex-direction:column;gap:10px;flex:1">
+<h3 style="font-size:36px;font-weight:700">The director decides</h3>
+<p style="font-size:28px;line-height:1.4;color:#4B5068">Approved surfaces only, a size cap, blocked categories and final sign-off.</p>
+</div>
+</div>
+<div style="display:flex;gap:24px;background:#FFFDF8;padding:40px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+<div style="display:flex;flex-direction:column;gap:10px;flex:1">
+<h3 style="font-size:36px;font-weight:700">The story never breaks</h3>
+<p style="font-size:28px;line-height:1.4;color:#4B5068">No ad breaks, and the original shot plays whenever a render isn’t ready.</p>
+</div>
+</div>
+<div style="display:flex;gap:24px;background:#FFFDF8;padding:40px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+<div style="display:flex;flex-direction:column;gap:10px;flex:1">
+<h3 style="font-size:36px;font-weight:700">Every ad explains itself</h3>
+<p style="font-size:28px;line-height:1.4;color:#4B5068">“Why this ad?” shows the reasons, using only city, language and plan.</p>
+</div>
+</div>
+<div style="display:flex;gap:24px;background:#FFFDF8;padding:40px;border:1px solid #E3DDCF;border-radius:22px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#A8611A;width:52px;height:52px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+<div style="display:flex;flex-direction:column;gap:10px;flex:1">
+<h3 style="font-size:36px;font-weight:700">One scene, sold again</h3>
+<p style="font-size:28px;line-height:1.4;color:#4B5068">New season, new market, new brand: the same shot earns again, no reshoot.</p>
+</div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#7A7468">InScene · 04</p>
+<aside class="notes">Our edge is control and trust: creators keep authority, viewers get transparency, and brands get placements that fit the scene.</aside>
+</section>
+
+<section class="slide" id="features" data-transition="fade" style="background:#0B1020;color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#F2A541;font-weight:700">Features</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1">Ten features, all working in the prototype</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:20px">
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><h3 style="font-size:28px;font-weight:700">Slot Scout</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Gemini finds ad surfaces in the film.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><h3 style="font-size:28px;font-weight:700">Brand Brief</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Real logos and products go into the edit.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><h3 style="font-size:28px;font-weight:700">Brand Safety</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Blocks tone-deaf pairings, with reasons.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><h3 style="font-size:28px;font-weight:700">Matching</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Right brand per viewer, with “Why this ad?”.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><h3 style="font-size:28px;font-weight:700">Shoppable Pause</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Pause for a product card and QR code.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><h3 style="font-size:28px;font-weight:700">Exposure Score</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Size, time and legibility, under a cap.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><h3 style="font-size:28px;font-weight:700">Dashboard</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Impressions, clicks and exposure by city.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><h3 style="font-size:28px;font-weight:700">Kids &amp; Ad-free</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Public-service posters or neutral art.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><h3 style="font-size:28px;font-weight:700">Seasonal</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">New season, new ad, no reshoot.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#1A2038;padding:28px;border-radius:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#F2A541;width:40px;height:40px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg><h3 style="font-size:28px;font-weight:700">Audio Ads</h3><p style="font-size:24px;line-height:1.35;color:#C8C4D6">Shop-radio lines in the viewer’s language.</p></div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8F8BA8">InScene · 05</p>
+<aside class="notes">Top row: find the surface, bring in the brand, keep it safe, pick per viewer, make it shoppable. Bottom row: measurement and reach.</aside>
+</section>
+
+<section class="slide" id="flow" data-transition="fade" style="background:#F5F2EA;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:44px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#A8611A;font-weight:700">Process flow</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1">Set up once, then personalise for every viewer</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:26px;font-weight:700;color:#4B5068;text-transform:uppercase;letter-spacing:2px">Once per film and campaign</p>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#FFFDF8;padding:24px;border:1px solid #E3DDCF;border-top:6px solid #F2A541;border-radius:14px"><h3 style="font-size:28px;font-weight:700">Upload film</h3><p style="font-size:24px;color:#4B5068">Director Studio</p></div>
+<svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="#A8611A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="2" y1="12" x2="33" y2="12"/><polyline points="33,3 42,12 33,21"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#FFFDF8;padding:24px;border:1px solid #E3DDCF;border-top:6px solid #F2A541;border-radius:14px"><h3 style="font-size:28px;font-weight:700">Slot Scout</h3><p style="font-size:24px;color:#4B5068">Gemini finds surfaces</p></div>
+<svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="#A8611A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="2" y1="12" x2="33" y2="12"/><polyline points="33,3 42,12 33,21"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#FFFDF8;padding:24px;border:1px solid #E3DDCF;border-top:6px solid #F2A541;border-radius:14px"><h3 style="font-size:28px;font-weight:700">Director rules</h3><p style="font-size:24px;color:#4B5068">Cap, blocks, approval</p></div>
+<svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="#A8611A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="2" y1="12" x2="33" y2="12"/><polyline points="33,3 42,12 33,21"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#FFFDF8;padding:24px;border:1px solid #E3DDCF;border-top:6px solid #F2A541;border-radius:14px"><h3 style="font-size:28px;font-weight:700">Brand brief</h3><p style="font-size:24px;color:#4B5068">Logo, product, targets</p></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:26px;font-weight:700;color:#4B5068;text-transform:uppercase;letter-spacing:2px">Per viewer group, cached</p>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#12162B;padding:24px;border-radius:14px"><h3 style="font-size:28px;font-weight:700;color:#F5F2EA">Match</h3><p style="font-size:24px;color:#C8C4D6">Targeting + safety</p></div>
+<svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="#A8611A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="2" y1="12" x2="33" y2="12"/><polyline points="33,3 42,12 33,21"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#12162B;padding:24px;border-radius:14px"><h3 style="font-size:28px;font-weight:700;color:#F5F2EA">Render</h3><p style="font-size:24px;color:#C8C4D6">Gemini Omni edit</p></div>
+<svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="#A8611A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="2" y1="12" x2="33" y2="12"/><polyline points="33,3 42,12 33,21"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#12162B;padding:24px;border-radius:14px"><h3 style="font-size:28px;font-weight:700;color:#F5F2EA">Validate</h3><p style="font-size:24px;color:#C8C4D6">Exposure vs cap</p></div>
+<svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="#A8611A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="2" y1="12" x2="33" y2="12"/><polyline points="33,3 42,12 33,21"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#12162B;padding:24px;border-radius:14px"><h3 style="font-size:28px;font-weight:700;color:#F5F2EA">Play &amp; shop</h3><p style="font-size:24px;color:#C8C4D6">Events to dashboard</p></div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#7A7468">InScene · 06 · If a render is late or fails a check, the original shot plays</p>
+<aside class="notes">Top row happens once per film and campaign. Bottom row runs per viewer group: the decision is pure and deterministic, so the render is cached and reused for every viewer who gets the same campaign.</aside>
+</section>
+
+<section class="slide" id="architecture" data-transition="fade" style="background:#0B1020;color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#F2A541;font-weight:700">Architecture</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1">One Cloud Run service, three Gemini models</h2>
+</div>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#1A2038;padding:28px;border-radius:18px">
+<h3 style="font-size:30px;font-weight:700;color:#F2A541">Browser</h3>
+<p style="font-size:24px;line-height:1.4;color:#C8C4D6">Director Studio<br>Brand Studio<br>Player + pause card<br>Compare view<br>Brand dashboard</p>
+</div>
+<svg width="48" height="24" viewBox="0 0 48 24" fill="none" stroke="#F2A541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="11" y1="12" x2="37" y2="12"/><polyline points="37,3 46,12 37,21"/><polyline points="11,3 2,12 11,21"/></svg>
+<div style="flex:1.6;display:flex;flex-direction:column;gap:12px;background:#1A2038;padding:28px;border-radius:18px;border:2px solid #F2A541">
+<h3 style="font-size:30px;font-weight:700;color:#F2A541">Cloud Run · Next.js</h3>
+<p style="font-size:24px;line-height:1.4;color:#C8C4D6">API: scout, campaigns, generate, decisions, events<br>Ad engine: matching, brand safety, exposure<br>Render queue + MSE playback manifest<br>ffmpeg for clips and fragments</p>
+</div>
+<svg width="48" height="24" viewBox="0 0 48 24" fill="none" stroke="#F2A541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><line x1="11" y1="12" x2="37" y2="12"/><polyline points="37,3 46,12 37,21"/><polyline points="11,3 2,12 11,21"/></svg>
+<div style="flex:1.2;display:flex;flex-direction:column;gap:12px;background:#1A2038;padding:28px;border-radius:18px">
+<h3 style="font-size:30px;font-weight:700;color:#F2A541">Gemini</h3>
+<p style="font-size:24px;line-height:1.4;color:#C8C4D6">Omni: video-to-video edit<br>3.5 Flash: scout, safety, exposure, prompts<br>2.5 Flash TTS: audio ads</p>
+</div>
+</div>
+<div style="display:flex;gap:20px">
+<p style="flex:1;font-size:24px;background:#131833;padding:18px 24px;border-radius:12px;color:#C8C4D6"><b>Secret Manager</b> holds the Gemini key</p>
+<p style="flex:1;font-size:24px;background:#131833;padding:18px 24px;border-radius:12px;color:#C8C4D6"><b>Cloud Build + Artifact Registry</b> build the image</p>
+<p style="flex:1;font-size:24px;background:#131833;padding:18px 24px;border-radius:12px;color:#C8C4D6"><b>Storage:</b> JSON store + media volume (Firestore and GCS next)</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8F8BA8">InScene · 07</p>
+<aside class="notes">Everything runs in one container on Cloud Run with ffmpeg included. The ad engine is pure TypeScript and unit-tested. Gemini does all the seeing, editing and speaking. Storage is a JSON store today; Firestore, Cloud Storage and BigQuery are the scale-out path.</aside>
+</section>
+
+<section class="slide" id="tech" data-transition="fade" style="background:#F5F2EA;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#A8611A;font-weight:700">Technologies used</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">Google AI and Google Cloud end to end</h2>
+</div>
+<table style="font-size:28px;color:#12162B;font-family:'DM Sans', Arial, sans-serif">
+<tr style="background:#12162B"><th style="width:24%;color:#F5F2EA;padding:16px">Layer</th><th style="width:76%;color:#F5F2EA">Technology</th></tr>
+<tr style="background:#FFFDF8"><td>Video editing</td><td>Gemini Omni (video-to-video) with brand images as references</td></tr>
+<tr><td>Understanding</td><td>Gemini 3.5 Flash: Slot Scout, scene safety, exposure, prompt writing</td></tr>
+<tr style="background:#FFFDF8"><td>Voice</td><td>Gemini 2.5 Flash TTS for local-language audio ads</td></tr>
+<tr><td>Cloud</td><td>Cloud Run, Cloud Build, Artifact Registry, Secret Manager, Vertex AI option</td></tr>
+<tr style="background:#FFFDF8"><td>App</td><td>Next.js 16, React 19, TypeScript, Tailwind CSS 4</td></tr>
+<tr><td>Media</td><td>ffmpeg, fragmented MP4, Media Source Extensions player</td></tr>
+<tr style="background:#FFFDF8"><td>Quality</td><td>Vitest unit tests for the ad engine, ESLint, strict TypeScript</td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#7A7468">InScene · 08</p>
+<aside class="notes">Every AI step uses Gemini through the Google Gen AI SDK, and the app deploys to Cloud Run with one script.</aside>
+</section>
+
+<section class="slide" id="demo" data-transition="fade" style="background:#0B1020;color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:44px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#F2A541;font-weight:700">Demo</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1">One billboard, six viewers, two dates</h2>
+</div>
+<table style="font-size:28px;color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif">
+<tr style="background:#1C2240"><th style="width:26%;color:#C8C4D6;padding:14px">Viewer</th><th style="width:37%;color:#C8C4D6">16 October</th><th style="width:37%;color:#F2A541">10 December</th></tr>
+<tr><td>Visakhapatnam</td><td>Monsoon Brew, Diwali offer</td><td>SkyHop (Diwali flight ended)</td></tr>
+<tr style="background:#131833"><td>Tokyo</td><td>Sakura Cold Brew</td><td>Sakura Cold Brew</td></tr>
+<tr><td>San Francisco</td><td>BayBytes app</td><td>BayBytes app</td></tr>
+<tr style="background:#131833"><td>Paris</td><td>SkyHop Airlines</td><td>Winter Lights Festival</td></tr>
+<tr><td>Paris, kids</td><td>Read Together library poster</td><td>Read Together library poster</td></tr>
+<tr style="background:#131833"><td>Ad-free plan</td><td>Neutral artwork</td><td>Neutral artwork</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4;color:#C8C4D6">Flow: Slot Scout → brand brief → compare cuts → pause to shop → dashboard. Brands are fictional.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8F8BA8">InScene · 09 · Picks verified on the running prototype</p>
+<aside class="notes">Demo order: run Slot Scout in Director Studio, create a campaign in Brand Studio, open Compare with three viewers, pause on Tokyo to show the shoppable card and Why this ad, switch the date to 10 December to show the seasonal swap, finish on the dashboard.</aside>
+</section>
+
+<section class="slide" id="cost" data-transition="fade" style="background:#F5F2EA;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:44px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#A8611A;font-weight:700">Estimated implementation cost</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1">Cost grows with campaigns and audiences, not with views</h2>
+</div>
+<table style="font-size:28px;color:#12162B;font-family:'DM Sans', Arial, sans-serif">
+<tr style="background:#12162B"><th style="width:34%;color:#F5F2EA;padding:16px">Cost item</th><th style="width:44%;color:#F5F2EA">When it is paid</th><th style="width:22%;color:#F5F2EA">Estimate</th></tr>
+<tr style="background:#FFFDF8"><td>Gemini Omni render</td><td>Once per slot × campaign × viewer group</td><td>[$__ each]</td></tr>
+<tr><td>Gemini Flash analysis</td><td>Once per film (scout) and slot (safety)</td><td>[$__ each]</td></tr>
+<tr style="background:#FFFDF8"><td>Exposure check</td><td>Once per render</td><td>[$__ each]</td></tr>
+<tr><td>Gemini TTS audio</td><td>Once per campaign × language</td><td>[$__ each]</td></tr>
+<tr style="background:#FFFDF8"><td>Cloud Run</td><td>One always-on instance, 2 vCPU, 2 GiB</td><td>[$__ / month]</td></tr>
+</table>
+<p style="font-size:28px;line-height:1.4;color:#4B5068">Every render is cached and replayed for free; a new render happens only when the campaign changes.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#7A7468">InScene · 10 · Fill estimates from current Google Cloud pricing before submitting</p>
+<aside class="notes">The key cost insight: we never render per individual viewer. Viewers who share a city, language and campaign share one cut. Fill in unit prices from the current Gemini and Cloud Run pricing pages.</aside>
+</section>
+
+<section class="slide" id="impact" data-transition="fade" style="background:#F2A541;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:52px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#3A2410;font-weight:700">Impact and business model</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">Everyone in the chain gets something better</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:10px;background:#FFF6E6;padding:36px;border-radius:20px"><h3 style="font-size:36px;font-weight:700">Viewers</h3><p style="font-size:28px;line-height:1.4;color:#3A2A18">No ad breaks, local ads in their own language, and a clear reason for each one.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FFF6E6;padding:36px;border-radius:20px"><h3 style="font-size:36px;font-weight:700">Creators</h3><p style="font-size:28px;line-height:1.4;color:#3A2A18">A revenue share of [__%] from scenes already shot, with full say over what appears.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FFF6E6;padding:36px;border-radius:20px"><h3 style="font-size:36px;font-weight:700">Brands</h3><p style="font-size:28px;line-height:1.4;color:#3A2A18">Pay for measured exposure, targeted by city and language, refreshed each season.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FFF6E6;padding:36px;border-radius:20px"><h3 style="font-size:36px;font-weight:700">Platforms</h3><p style="font-size:28px;line-height:1.4;color:#3A2A18">License the engine to cut ad breaks without losing ad revenue.</p></div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#3A2410">InScene · 11 · The same engine can localise lessons, news explainers and public-service messages</p>
+<aside class="notes">A three-sided marketplace: brands pay, creators earn, platforms license. Beyond ads, the engine localises any on-screen text or surface, which opens education and public-service uses.</aside>
+</section>
+
+<section class="slide" id="roadmap" data-transition="fade" style="background:#F5F2EA;color:#12162B;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:52px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#A8611A;font-weight:700">Future development</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">From prototype to platform</h2>
+</div>
+<div style="display:flex;gap:28px">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#12162B;color:#F5F2EA;padding:40px;border-radius:22px">
+<p style="font-size:26px;font-weight:700;color:#F2A541;text-transform:uppercase;letter-spacing:2px">Now</p>
+<h3 style="font-size:36px;font-weight:700">Working prototype</h3>
+<ul style="font-size:28px;line-height:1.5;color:#C8C4D6"><li>All ten features</li><li>Cloud Run deploy</li><li>Unit-tested ad engine</li></ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;padding:40px;border:1px solid #E3DDCF;border-radius:22px">
+<p style="font-size:26px;font-weight:700;color:#A8611A;text-transform:uppercase;letter-spacing:2px">Next</p>
+<h3 style="font-size:36px;font-weight:700">Scale out</h3>
+<ul style="font-size:28px;line-height:1.5;color:#4B5068"><li>Firestore and Cloud Storage</li><li>Cloud Tasks render queue</li><li>BigQuery analytics</li></ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;padding:40px;border:1px solid #E3DDCF;border-radius:22px">
+<p style="font-size:26px;font-weight:700;color:#A8611A;text-transform:uppercase;letter-spacing:2px">Later</p>
+<h3 style="font-size:36px;font-weight:700">New formats</h3>
+<ul style="font-size:28px;line-height:1.5;color:#4B5068"><li>Live sports and streams</li><li>Smart-TV player SDK</li><li>Creator ad marketplace</li></ul>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#7A7468">InScene · 12</p>
+<aside class="notes">Next steps are mostly infrastructure: managed storage, a durable queue and analytics so we can run many instances. Then new formats like live sports and smart-TV apps.</aside>
+</section>
+
+<section class="slide" id="links" data-transition="fade" style="background:linear-gradient(135deg, #0B1020 0%, #1B1F3B 70%, #3A2A1A 100%);color:#F5F2EA;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:center;gap:44px">
+<p style="font-size:28px;letter-spacing:5px;text-transform:uppercase;color:#F2A541;font-weight:700">Links</p>
+<h1 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:120px;font-weight:700;line-height:1.02;letter-spacing:-3px">No ad breaks.<br>Just a better scene.</h1>
+<div style="display:flex;flex-direction:column;gap:18px">
+<p style="font-size:32px;color:#E6E2F0"><b style="color:#F2A541">GitHub</b>   github.com/Rajendra465/aibuildercup-sub</p>
+<p style="font-size:32px;color:#E6E2F0"><b style="color:#F2A541">Live prototype</b>   [Cloud Run URL]</p>
+<p style="font-size:32px;color:#E6E2F0"><b style="color:#F2A541">Demo video</b>   [YouTube or Drive link]</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8F8BA8">InScene · AI Builder Cup 2026 · Media, Content &amp; Digital Experiences</p>
+<aside class="notes">Close on the line, then share the links. Fill in the live URL and demo video before submitting.</aside>
+</section>
+
+<div id="notes" role="note" aria-live="polite"></div>
+<nav class="ui" aria-label="Slide navigation">
+  <button id="prev" aria-label="Previous slide">&#8592;</button>
+  <span id="count" aria-live="polite"></span>
+  <button id="next" aria-label="Next slide">&#8594;</button>
+  <button id="toggle-notes" aria-label="Toggle speaker notes">Notes</button>
+  <button id="full" aria-label="Full screen">Full screen</button>
+</nav>
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var notes = document.getElementById('notes');
+  var count = document.getElementById('count');
+  var index = 0;
+
+  function fit() {
+    var scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    document.documentElement.style.setProperty('--scale', String(scale));
+  }
+
+  function show(next) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach(function (slide, i) {
+      slide.classList.toggle('active', i === index);
+      slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+    });
+    count.textContent = (index + 1) + ' / ' + slides.length;
+    var aside = slides[index].querySelector('aside.notes');
+    notes.textContent = aside ? aside.textContent : 'No notes for this slide.';
+    if (location.hash !== '#' + (index + 1)) history.replaceState(null, '', '#' + (index + 1));
+  }
+
+  document.getElementById('prev').addEventListener('click', function () { show(index - 1); });
+  document.getElementById('next').addEventListener('click', function () { show(index + 1); });
+  document.getElementById('toggle-notes').addEventListener('click', function () { document.body.classList.toggle('show-notes'); });
+  document.getElementById('full').addEventListener('click', function () {
+    if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (['ArrowRight', 'PageDown', ' '].indexOf(event.key) !== -1) { event.preventDefault(); show(index + 1); }
+    else if (['ArrowLeft', 'PageUp'].indexOf(event.key) !== -1) { event.preventDefault(); show(index - 1); }
+    else if (event.key === 'Home') show(0);
+    else if (event.key === 'End') show(slides.length - 1);
+    else if (event.key === 'n' || event.key === 'N') document.body.classList.toggle('show-notes');
+    else if (event.key === 'f' || event.key === 'F') document.getElementById('full').click();
+  });
+  document.addEventListener('click', function (event) {
+    if (event.target.closest('.ui, #notes, a')) return;
+    show(event.clientX > window.innerWidth / 2 ? index + 1 : index - 1);
+  });
+  window.addEventListener('resize', fit);
+  fit();
+  var start = parseInt(location.hash.slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1);
+})();
+</script>
+</body>
+</html>
