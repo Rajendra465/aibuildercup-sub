@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AdPreference, ViewerProfile } from "@/lib/types";
+import { Sparkles, UserPlus } from "lucide-react";
 
 type ProfileResponse = {
   success: boolean;
@@ -23,6 +24,8 @@ const AD_PREFERENCE_OPTIONS: { value: AdPreference; label: string }[] = [
   { value: "ad_free", label: "Ad-free — neutral artwork" },
   { value: "kids", label: "Kids — public-service only" },
 ];
+
+const FIELD_CLASS = "h-10 rounded-xl border-white/12 bg-white/5 px-3 focus-visible:border-amber/60 focus-visible:ring-amber/25";
 
 function parseAdPreference(value: FormDataEntryValue | null): AdPreference {
   return AD_PREFERENCE_OPTIONS.find((option) => option.value === value)?.value ?? "standard";
@@ -67,40 +70,50 @@ export function CustomProfileForm({ movieId }: CustomProfileFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-zinc-800 bg-zinc-900 p-5 flex flex-col gap-4">
-      <div>
-        <h2 className="text-xl font-semibold text-slate-100">Create Custom Profile</h2>
-        <p className="text-sm text-slate-400 mt-1">Use declared viewer location and language for personalization.</p>
+    <form
+      onSubmit={handleSubmit}
+      className="glass-strong relative flex flex-col gap-6 overflow-hidden rounded-3xl p-6 sm:p-8"
+      aria-labelledby="custom-profile-heading"
+    >
+      <div aria-hidden="true" className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full bg-violet/25 blur-3xl" />
+      <div className="relative flex items-start gap-4">
+        <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-amber/30 bg-amber/10 text-amber">
+          <UserPlus className="size-5" aria-hidden="true" />
+        </div>
+        <div>
+          <h2 id="custom-profile-heading" className="text-xl font-semibold text-white">Create Custom Profile</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Use declared viewer location and language for personalization.</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="relative grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="displayName">Name</Label>
-          <Input id="displayName" name="displayName" placeholder="Sampath" required />
+          <Label htmlFor="displayName" className="text-white/80">Name</Label>
+          <Input id="displayName" name="displayName" placeholder="Sampath" required className={FIELD_CLASS} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="city">City</Label>
-          <Input id="city" name="city" placeholder="Visakhapatnam" required />
+          <Label htmlFor="city" className="text-white/80">City</Label>
+          <Input id="city" name="city" placeholder="Visakhapatnam" required className={FIELD_CLASS} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="country">Country</Label>
-          <Input id="country" name="country" placeholder="India" required />
+          <Label htmlFor="country" className="text-white/80">Country</Label>
+          <Input id="country" name="country" placeholder="India" required className={FIELD_CLASS} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="locale">Locale</Label>
-          <Input id="locale" name="locale" placeholder="te-IN" required />
+          <Label htmlFor="locale" className="text-white/80">Locale</Label>
+          <Input id="locale" name="locale" placeholder="te-IN" required className={FIELD_CLASS} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="languageLabel">Language</Label>
-          <Input id="languageLabel" name="languageLabel" placeholder="Telugu" required />
+          <Label htmlFor="languageLabel" className="text-white/80">Language</Label>
+          <Input id="languageLabel" name="languageLabel" placeholder="Telugu" required className={FIELD_CLASS} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="adPreference">Ads</Label>
+          <Label htmlFor="adPreference" className="text-white/80">Ads</Label>
           <select
             id="adPreference"
             name="adPreference"
             defaultValue="standard"
-            className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm text-slate-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 [&>option]:bg-zinc-900"
+            className="h-10 w-full rounded-xl border border-white/12 bg-white/5 px-3 text-sm text-white outline-none transition-colors focus-visible:border-amber/60 focus-visible:ring-3 focus-visible:ring-amber/25 [&>option]:bg-night"
           >
             {AD_PREFERENCE_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -110,13 +123,23 @@ export function CustomProfileForm({ movieId }: CustomProfileFormProps) {
           </select>
         </div>
         <div className="flex flex-col gap-2 md:col-span-2">
-          <Label htmlFor="culturalContext">Cultural context</Label>
-          <Textarea id="culturalContext" name="culturalContext" placeholder="coastal city, India" />
+          <Label htmlFor="culturalContext" className="text-white/80">Cultural context</Label>
+          <Textarea
+            id="culturalContext"
+            name="culturalContext"
+            placeholder="coastal city, India"
+            className="rounded-xl border-white/12 bg-white/5 px-3 focus-visible:border-amber/60 focus-visible:ring-amber/25"
+          />
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-300">{error}</p>}
-      <Button type="submit" className="rounded self-start" disabled={isSubmitting}>
+      {error && (
+        <p role="alert" className="relative rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          {error}
+        </p>
+      )}
+      <Button type="submit" className="relative h-10 self-start px-5" disabled={isSubmitting}>
+        <Sparkles aria-hidden="true" />
         {isSubmitting ? "Creating..." : "Create and watch"}
       </Button>
     </form>

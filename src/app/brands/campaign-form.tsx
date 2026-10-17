@@ -1,15 +1,14 @@
 "use client";
 
-import { type FormEvent, type ReactNode, useEffect, useId, useState } from "react";
-import Image from "next/image";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { type FormEvent, useId, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, Loader2, Sparkles } from "lucide-react";
 import type { Campaign } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import { CATEGORIES, CATEGORY_LABELS, errorMessage, fetchJson } from "./campaign-utils";
+import { CONTROL_CLASS, Field, FormSection, ImageField, SELECT_CLASS } from "./form-fields";
 
 type FieldName =
   | "brandName" | "productName" | "tagline" | "category" | "landingUrl" | "ctaLabel"
@@ -85,78 +84,6 @@ function fieldForServerError(message: string): FieldName | undefined {
   return undefined;
 }
 
-interface FieldProps {
-  id: string;
-  label: string;
-  error?: string;
-  hint?: string;
-  required?: boolean;
-  className?: string;
-  children: ReactNode;
-}
-
-function Field({ id, label, error, hint, required, className, children }: FieldProps) {
-  return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      <Label htmlFor={id} className="text-slate-200">
-        {label}
-        {required && <span className="text-[#F2A541]" aria-hidden="true">*</span>}
-      </Label>
-      {children}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs text-red-400">
-          {error}
-        </p>
-      ) : hint ? (
-        <p id={`${id}-hint`} className="text-xs text-slate-500">
-          {hint}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-interface ImageFieldProps {
-  name: "logo" | "productImage";
-  label: string;
-  error?: string;
-}
-
-function ImageField({ name, label, error }: ImageFieldProps) {
-  const id = `${useId()}-${name}`;
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  useEffect(() => () => {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-  }, [previewUrl]);
-
-  return (
-    <Field id={id} label={label} error={error} hint="PNG, JPEG or WebP, up to 5 MB">
-      <div className="flex items-center gap-3">
-        <div className="relative size-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-zinc-950">
-          {previewUrl ? (
-            <Image src={previewUrl} alt={`${label} preview`} fill unoptimized sizes="64px" className="object-contain" />
-          ) : (
-            <span className="flex size-full items-center justify-center text-[10px] text-slate-600">No file</span>
-          )}
-        </div>
-        <Input
-          id={id}
-          name={name}
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? `${id}-error` : `${id}-hint`}
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            setPreviewUrl(file ? URL.createObjectURL(file) : null);
-          }}
-        />
-      </div>
-    </Field>
-  );
-}
-
 export function CampaignForm({ onCreated, onCancel }: CampaignFormProps) {
   const baseId = useId();
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -167,6 +94,7 @@ export function CampaignForm({ onCreated, onCancel }: CampaignFormProps) {
   const inputProps = (name: FieldName) => ({
     id: fieldId(name),
     name,
+    className: CONTROL_CLASS,
     "aria-invalid": Boolean(errors[name]),
     "aria-describedby": errors[name] ? `${fieldId(name)}-error` : undefined,
   });
@@ -198,95 +126,105 @@ export function CampaignForm({ onCreated, onCancel }: CampaignFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      {formError && (
-        <div role="alert" className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          {formError}
-        </div>
-      )}
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col">
+      <div className="flex flex-col gap-4 px-6 py-5">
+        <AnimatePresence initial={false}>
+          {formError && (
+            <motion.div
+              key="form-error"
+              role="alert"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <div className="flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-400" aria-hidden="true" />
+                {formError}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <legend className="mb-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">Brand &amp; creative</legend>
-        <Field id={fieldId("brandName")} label="Brand name" required error={errors.brandName}>
-          <Input {...inputProps("brandName")} placeholder="Monsoon Brew" required />
-        </Field>
-        <Field id={fieldId("productName")} label="Product name" required error={errors.productName}>
-          <Input {...inputProps("productName")} placeholder="Masala Cold Coffee" required />
-        </Field>
-        <Field id={fieldId("tagline")} label="Tagline" required error={errors.tagline} className="sm:col-span-2">
-          <Input {...inputProps("tagline")} placeholder="Brewed for the rain." required />
-        </Field>
-        <Field id={fieldId("category")} label="Category" required error={errors.category}>
-          <select
-            {...inputProps("category")}
-            defaultValue="food_beverage"
-            className="h-8 w-full rounded-lg border border-input bg-zinc-900 px-2.5 text-sm text-slate-100 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
-          >
-            {CATEGORIES.map((category) => (
-              <option key={category} value={category}>
-                {CATEGORY_LABELS[category]}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field id={fieldId("brandColors")} label="Brand colours" error={errors.brandColors} hint="Up to 4 hex values, comma separated">
-          <Input {...inputProps("brandColors")} placeholder="#1B4D3E, #F2A541" />
-        </Field>
-        <ImageField name="logo" label="Logo" error={errors.logo} />
-        <ImageField name="productImage" label="Product image" error={errors.productImage} />
-      </fieldset>
+        <FormSection step={1} title="Brand & creative" description="Who you are and what appears in the shot.">
+          <Field id={fieldId("brandName")} label="Brand name" required error={errors.brandName}>
+            <Input {...inputProps("brandName")} placeholder="Monsoon Brew" required />
+          </Field>
+          <Field id={fieldId("productName")} label="Product name" required error={errors.productName}>
+            <Input {...inputProps("productName")} placeholder="Masala Cold Coffee" required />
+          </Field>
+          <Field id={fieldId("tagline")} label="Tagline" required error={errors.tagline} className="sm:col-span-2">
+            <Input {...inputProps("tagline")} placeholder="Brewed for the rain." required />
+          </Field>
+          <Field id={fieldId("category")} label="Category" required error={errors.category}>
+            <select {...inputProps("category")} defaultValue="food_beverage" className={SELECT_CLASS}>
+              {CATEGORIES.map((category) => (
+                <option key={category} value={category} className="bg-night text-slate-100">
+                  {CATEGORY_LABELS[category]}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field id={fieldId("brandColors")} label="Brand colours" error={errors.brandColors} hint="Up to 4 hex values, comma separated">
+            <Input {...inputProps("brandColors")} placeholder="#1B4D3E, #F2A541" />
+          </Field>
+          <ImageField name="logo" label="Logo" error={errors.logo} />
+          <ImageField name="productImage" label="Product image" error={errors.productImage} />
+        </FormSection>
 
-      <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <legend className="mb-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">Shoppable pause</legend>
-        <Field id={fieldId("landingUrl")} label="Landing URL" required error={errors.landingUrl}>
-          <Input {...inputProps("landingUrl")} type="url" placeholder="https://example.com/product" required />
-        </Field>
-        <Field id={fieldId("ctaLabel")} label="CTA label" error={errors.ctaLabel} hint="Defaults to “Learn more”">
-          <Input {...inputProps("ctaLabel")} placeholder="Shop now" />
-        </Field>
-      </fieldset>
+        <FormSection step={2} title="Shoppable pause" description="Where viewers land when they tap the in-scene card.">
+          <Field id={fieldId("landingUrl")} label="Landing URL" required error={errors.landingUrl}>
+            <Input {...inputProps("landingUrl")} type="url" placeholder="https://example.com/product" required />
+          </Field>
+          <Field id={fieldId("ctaLabel")} label="CTA label" error={errors.ctaLabel} hint="Defaults to “Learn more”">
+            <Input {...inputProps("ctaLabel")} placeholder="Shop now" />
+          </Field>
+        </FormSection>
 
-      <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <legend className="mb-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">Targeting &amp; safety</legend>
-        <Field id={fieldId("targetCities")} label="Target cities" error={errors.targetCities} hint="Comma or newline list; empty = everywhere">
-          <Textarea {...inputProps("targetCities")} rows={2} placeholder="Mumbai, Tokyo" />
-        </Field>
-        <Field id={fieldId("targetCountries")} label="Target countries" error={errors.targetCountries} hint="Empty = everywhere">
-          <Textarea {...inputProps("targetCountries")} rows={2} placeholder="India, Japan" />
-        </Field>
-        <Field id={fieldId("targetLocales")} label="Target locales" error={errors.targetLocales} hint="e.g. hi-IN, ja-JP">
-          <Textarea {...inputProps("targetLocales")} rows={2} placeholder="hi-IN, ja-JP" />
-        </Field>
-        <Field id={fieldId("avoidContexts")} label="Avoid contexts" error={errors.avoidContexts} hint="Scenes the brand must never appear in">
-          <Textarea {...inputProps("avoidContexts")} rows={2} placeholder="violence, drinking" />
-        </Field>
-      </fieldset>
+        <FormSection step={3} title="Targeting & safety" description="Who sees it, and the scenes it must never touch.">
+          <Field id={fieldId("targetCities")} label="Target cities" error={errors.targetCities} hint="Comma or newline list; empty = everywhere">
+            <Textarea {...inputProps("targetCities")} rows={2} placeholder="Mumbai, Tokyo" />
+          </Field>
+          <Field id={fieldId("targetCountries")} label="Target countries" error={errors.targetCountries} hint="Empty = everywhere">
+            <Textarea {...inputProps("targetCountries")} rows={2} placeholder="India, Japan" />
+          </Field>
+          <Field id={fieldId("targetLocales")} label="Target locales" error={errors.targetLocales} hint="e.g. hi-IN, ja-JP">
+            <Textarea {...inputProps("targetLocales")} rows={2} placeholder="hi-IN, ja-JP" />
+          </Field>
+          <Field id={fieldId("avoidContexts")} label="Avoid contexts" error={errors.avoidContexts} hint="Scenes the brand must never appear in">
+            <Textarea {...inputProps("avoidContexts")} rows={2} placeholder="violence, drinking" />
+          </Field>
+        </FormSection>
 
-      <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <legend className="mb-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">Flight &amp; bidding</legend>
-        <Field id={fieldId("flightStart")} label="Flight start" error={errors.flightStart}>
-          <Input {...inputProps("flightStart")} type="date" />
-        </Field>
-        <Field id={fieldId("flightEnd")} label="Flight end" error={errors.flightEnd}>
-          <Input {...inputProps("flightEnd")} type="date" />
-        </Field>
-        <Field id={fieldId("seasonLabel")} label="Season label" error={errors.seasonLabel}>
-          <Input {...inputProps("seasonLabel")} placeholder="Diwali" />
-        </Field>
-        <Field id={fieldId("bidWeight")} label="Bid weight (0–10)" error={errors.bidWeight} hint="Higher wins ties">
-          <Input {...inputProps("bidWeight")} type="number" min={0} max={10} step={0.5} defaultValue={1} />
-        </Field>
-        <Field id={fieldId("audioScript")} label="Audio ad script" error={errors.audioScript} hint="Optional line read inside the scene" className="sm:col-span-2">
-          <Textarea {...inputProps("audioScript")} rows={2} placeholder="Nothing beats the rain like a Monsoon Brew." />
-        </Field>
-      </fieldset>
+        <FormSection step={4} title="Flight & bidding" description="When it runs and how hard it competes." columns={3}>
+          <Field id={fieldId("flightStart")} label="Flight start" error={errors.flightStart}>
+            <Input {...inputProps("flightStart")} type="date" />
+          </Field>
+          <Field id={fieldId("flightEnd")} label="Flight end" error={errors.flightEnd}>
+            <Input {...inputProps("flightEnd")} type="date" />
+          </Field>
+          <Field id={fieldId("seasonLabel")} label="Season label" error={errors.seasonLabel}>
+            <Input {...inputProps("seasonLabel")} placeholder="Diwali" />
+          </Field>
+          <Field id={fieldId("bidWeight")} label="Bid weight (0–10)" error={errors.bidWeight} hint="Higher wins ties">
+            <Input {...inputProps("bidWeight")} type="number" min={0} max={10} step={0.5} defaultValue={1} />
+          </Field>
+          <Field id={fieldId("audioScript")} label="Audio ad script" error={errors.audioScript} hint="Optional line read inside the scene" className="sm:col-span-2">
+            <Textarea {...inputProps("audioScript")} rows={2} placeholder="Nothing beats the rain like a Monsoon Brew." />
+          </Field>
+        </FormSection>
+      </div>
 
-      <div className="flex flex-col-reverse gap-2 border-t border-white/10 pt-4 sm:flex-row sm:justify-end">
-        <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
+      <div className="glass-strong sticky bottom-0 z-10 flex flex-col-reverse gap-2 rounded-none border-x-0 border-b-0 px-6 py-4 sm:flex-row sm:items-center sm:justify-end">
+        <p className="hidden flex-1 items-center gap-1.5 text-xs text-muted-foreground sm:flex">
+          <Sparkles className="size-3.5 text-amber" aria-hidden="true" />
+          Live in the matcher the moment you save.
+        </p>
+        <Button type="button" variant="outline" className="h-10 px-4" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting} className="bg-[#F2A541] text-black hover:bg-[#e0922c]">
+        <Button type="submit" disabled={isSubmitting} className="h-10 px-5">
           {isSubmitting && <Loader2 className="animate-spin" aria-hidden="true" />}
           {isSubmitting ? "Saving…" : "Create campaign"}
         </Button>

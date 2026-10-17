@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import { SiteNav } from "@/components/site-nav";
+import { Aurora } from "@/components/fx/aurora";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const display = Space_Grotesk({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,9 +32,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body
-        className={`${inter.variable} font-sans antialiased bg-zinc-950 text-slate-50`}
-      >
+      <body className={`${inter.variable} ${display.variable} min-h-screen font-sans antialiased text-foreground`}>
+        <Aurora />
         <SiteNav />
         {children}
       </body>

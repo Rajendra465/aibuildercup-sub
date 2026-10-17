@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { seedMovies, seedProfiles } from "@/lib/data/seed";
 import { GenerationJob, PlaybackManifest, PlaybackSegment } from "@/lib/types";
-import { Card, CardContent } from "@/components/ui/card";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, LoaderCircle, Pause, Play } from "lucide-react";
+import { FadeIn } from "@/components/fx/motion";
 import { validSimulatedDate } from "./ad-client";
 import { useAdDecisions } from "./use-ad-decisions";
 import { useAdTracking } from "./use-ad-tracking";
@@ -62,6 +64,26 @@ function mergeFrozenSegments(
     }
     return segment;
   });
+}
+
+function formatClock(totalSeconds: number): string {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function NotFoundPanel({ message }: { message: string }) {
+  return (
+    <main className="mx-auto flex min-h-[60vh] max-w-xl items-center justify-center px-4 py-10">
+      <div className="glass flex flex-col items-center gap-4 rounded-3xl p-10 text-center">
+        <p className="text-lg font-semibold text-white">{message}</p>
+        <Link href="/watch" className="text-sm text-amber transition-colors hover:text-white focus-visible:underline focus-visible:outline-none">
+          Back to Projects
+        </Link>
+      </div>
+    </main>
+  );
 }
 
 type PlaybackMode = "MSE" | "DUAL_VIDEO_FALLBACK" | "MSE_ERROR";
@@ -502,119 +524,197 @@ export default function WatchMoviePage() {
     }
   };
 
-  if (!movie) return <main className="p-8">Movie not found</main>;
+  if (!movie) return <NotFoundPanel message="Movie not found" />;
 
   if (!profileId) {
     return <ProfilePicker movie={movie} profiles={seedProfiles} date={simulatedDate} />;
   }
 
-  if (!profile) return <main className="p-8">Profile not found</main>;
+  if (!profile) return <NotFoundPanel message="Profile not found" />;
+
+  const progressPercent = Math.min(100, Math.max(0, (displayTimelineTime / activeMovie.durationSeconds) * 100));
+  const adaptiveSegments = displaySegments.filter((segment) => segment.type === "ADAPTIVE");
 
   return (
-    <main className="min-h-screen p-8 max-w-5xl mx-auto flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <Link href={simulatedDate ? `/watch/${movie.id}?date=${simulatedDate}` : `/watch/${movie.id}`} className="text-indigo-400 hover:text-indigo-300 text-sm mb-2 inline-block">
-            &larr; Back to Profiles
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-8 sm:px-8 sm:py-10">
+      <FadeIn className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="min-w-0">
+          <Link
+            href={simulatedDate ? `/watch/${movie.id}?date=${simulatedDate}` : `/watch/${movie.id}`}
+            className="mb-3 inline-flex items-center gap-1.5 rounded-lg text-sm text-muted-foreground transition-colors hover:text-white focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Back to Profiles
           </Link>
-          <h1 className="text-3xl font-bold">{activeMovie.title}</h1>
-          <p className="text-slate-400 mt-1">
-            Personalized for <strong className="text-slate-200">{activeProfile.displayName}</strong> ({activeProfile.city}, {activeProfile.languageLabel})
+          <h1 className="text-3xl font-bold text-white sm:text-4xl">{activeMovie.title}</h1>
+          <p className="mt-2 text-muted-foreground">
+            Personalized for <strong className="font-semibold text-white">{activeProfile.displayName}</strong> ({activeProfile.city}, {activeProfile.languageLabel})
           </p>
         </div>
-      </div>
-      <DateSimulator date={simulatedDate} seasonLabels={seasonLabels} />
+        <DateSimulator date={simulatedDate} seasonLabels={seasonLabels} />
+      </FadeIn>
 
-      <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
-        <div className="aspect-video bg-black flex flex-col items-center justify-center relative">
-          <video
-            ref={mseVideoRef}
-            className={`absolute inset-0 w-full h-full object-cover ${playbackMode === "MSE" ? "opacity-100" : "opacity-0"}`}
-            onTimeUpdate={handleMseTimeUpdate}
-            onEnded={handleMseEnded}
-            controls={false}
-            preload="auto"
-            playsInline
-          />
-          <video
-            ref={primaryVideoRef}
-            className={`absolute inset-0 w-full h-full object-cover ${playbackMode !== "MSE" && activePlayerIndex === 0 ? "opacity-100" : "opacity-0"}`}
-            onTimeUpdate={() => handleTimeUpdate(0)}
-            onEnded={() => handleEnded(0)}
-            controls={false}
-            preload="auto"
-            playsInline
-          />
-          <video
-            ref={secondaryVideoRef}
-            className={`absolute inset-0 w-full h-full object-cover ${playbackMode !== "MSE" && activePlayerIndex === 1 ? "opacity-100" : "opacity-0"}`}
-            onTimeUpdate={() => handleTimeUpdate(1)}
-            onEnded={() => handleEnded(1)}
-            controls={false}
-            preload="auto"
-            playsInline
-          />
+      <FadeIn delay={0.08} className="relative">
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-[radial-gradient(ellipse_at_30%_40%,rgb(242_165_65/0.35),transparent_60%),radial-gradient(ellipse_at_75%_60%,rgb(139_92_246/0.35),transparent_60%)] blur-3xl transition-opacity duration-1000 ${
+            displayIsPlaying ? "opacity-100" : "opacity-60"
+          }`}
+        />
+        <div className="glass relative overflow-hidden rounded-3xl p-1.5 sm:p-2">
+          <div className="relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-2xl bg-black">
+            <video
+              ref={mseVideoRef}
+              className={`absolute inset-0 w-full h-full object-cover ${playbackMode === "MSE" ? "opacity-100" : "opacity-0"}`}
+              onTimeUpdate={handleMseTimeUpdate}
+              onEnded={handleMseEnded}
+              controls={false}
+              preload="auto"
+              playsInline
+            />
+            <video
+              ref={primaryVideoRef}
+              className={`absolute inset-0 w-full h-full object-cover ${playbackMode !== "MSE" && activePlayerIndex === 0 ? "opacity-100" : "opacity-0"}`}
+              onTimeUpdate={() => handleTimeUpdate(0)}
+              onEnded={() => handleEnded(0)}
+              controls={false}
+              preload="auto"
+              playsInline
+            />
+            <video
+              ref={secondaryVideoRef}
+              className={`absolute inset-0 w-full h-full object-cover ${playbackMode !== "MSE" && activePlayerIndex === 1 ? "opacity-100" : "opacity-0"}`}
+              onTimeUpdate={() => handleTimeUpdate(1)}
+              onEnded={() => handleEnded(1)}
+              controls={false}
+              preload="auto"
+              playsInline
+            />
 
-          <div className="absolute top-4 left-4 p-2 bg-black/60 rounded text-xs font-mono text-white/50 pointer-events-none">
-            Segment: {displayCurrentSegment?.source || "LOADING"} ({displaySegments.length ? currentSegmentIndex + 1 : 0}/{displaySegments.length}) · {playbackMode}
-          </div>
+            {!displayCurrentSegment && (
+              <div className="shimmer-bg animate-shimmer pointer-events-none absolute inset-0 flex items-center justify-center bg-ink/60 text-sm text-muted-foreground">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-2 backdrop-blur-md">
+                  <LoaderCircle className="size-4 animate-spin text-amber" aria-hidden="true" />
+                  Preparing your cut
+                </span>
+              </div>
+            )}
 
-          {activeSlot && <WhyThisAd key={activeSlot.slotId} slot={activeSlot} />}
-          {showPauseCard && activeSlot && <AdPauseCard slot={activeSlot} onCtaClick={logClick} />}
-          {adSlots.map((slot) =>
-            slot.cut?.audioAssetUrl ? (
-              <AdAudio
-                key={`${slot.slotId}:${slot.cut.audioAssetUrl}`}
-                slot={slot}
-                audioUrl={slot.cut.audioAssetUrl}
-                isActive={isPlaying && activeSlot?.slotId === slot.slotId}
-                onPlay={logAudioPlay}
-              />
-            ) : null,
-          )}
-
-          {error && (
-            <div className="absolute bottom-20 right-4 z-30 max-w-sm p-2 bg-red-950/90 border border-red-800 rounded text-xs text-red-100">
-              {error}
+            <div className="pointer-events-none absolute top-4 left-4 rounded-full border border-white/10 bg-black/45 px-3 py-1 font-mono text-[11px] text-white/60 backdrop-blur-md">
+              Segment: {displayCurrentSegment?.source || "LOADING"} ({displaySegments.length ? currentSegmentIndex + 1 : 0}/{displaySegments.length}) · {playbackMode}
             </div>
-          )}
 
-          <div className="absolute bottom-0 left-0 right-0 z-30 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-4">
-            <button
-              className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center font-bold"
-              onClick={() => setIsPlaying((value) => !value)}
-              disabled={!displayCurrentSegment}
-            >
-              {displayIsPlaying ? "||" : "▶"}
-            </button>
-            <div className="flex-1 h-1.5 bg-white/20 rounded-full relative overflow-hidden">
-              <div
-                className="absolute top-0 left-0 bottom-0 bg-[#F2A541] transition-all duration-300"
-                style={{ width: `${(displayTimelineTime / activeMovie.durationSeconds) * 100}%` }}
-              />
+            {activeSlot && <WhyThisAd key={activeSlot.slotId} slot={activeSlot} />}
+            <AnimatePresence>
+              {showPauseCard && activeSlot && <AdPauseCard key={activeSlot.slotId} slot={activeSlot} onCtaClick={logClick} />}
+            </AnimatePresence>
+            {adSlots.map((slot) =>
+              slot.cut?.audioAssetUrl ? (
+                <AdAudio
+                  key={`${slot.slotId}:${slot.cut.audioAssetUrl}`}
+                  slot={slot}
+                  audioUrl={slot.cut.audioAssetUrl}
+                  isActive={isPlaying && activeSlot?.slotId === slot.slotId}
+                  onPlay={logAudioPlay}
+                />
+              ) : null,
+            )}
+
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  key="player-error"
+                  role="status"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute right-4 bottom-24 z-30 max-w-sm rounded-xl border border-red-400/30 bg-red-950/70 px-3 py-2 text-xs text-red-100 backdrop-blur-md"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 pt-12 sm:p-4 sm:pt-16">
+              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-3 py-2 shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl sm:gap-4 sm:px-4">
+                <button
+                  type="button"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-[0_0_24px_-4px_rgb(255_255_255/0.6)] transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-amber/60 focus-visible:outline-none active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
+                  onClick={() => setIsPlaying((value) => !value)}
+                  disabled={!displayCurrentSegment}
+                  aria-label={displayIsPlaying ? "Pause" : "Play"}
+                >
+                  {displayIsPlaying ? <Pause className="size-4 fill-current" /> : <Play className="ml-0.5 size-4 fill-current" />}
+                </button>
+                <span className="w-10 shrink-0 text-right font-mono text-[11px] text-white/80 tabular-nums sm:w-12 sm:text-xs">
+                  {formatClock(displayTimelineTime)}
+                </span>
+                <div
+                  className="relative h-1.5 flex-1 rounded-full bg-white/15"
+                  role="progressbar"
+                  aria-label="Playback progress"
+                  aria-valuemin={0}
+                  aria-valuemax={Math.round(activeMovie.durationSeconds)}
+                  aria-valuenow={Math.round(displayTimelineTime)}
+                >
+                  {adSlots.map((slot) => (
+                    <span
+                      key={`marker-${slot.slotId}`}
+                      aria-hidden="true"
+                      className="absolute top-1/2 h-2.5 w-0.5 -translate-y-1/2 rounded-full bg-violet/80"
+                      style={{ left: `${Math.min(100, (slot.startSeconds / activeMovie.durationSeconds) * 100)}%` }}
+                    />
+                  ))}
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#ffbe5c] to-amber shadow-[0_0_12px_rgb(242_165_65/0.7)] transition-all duration-300"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-amber shadow-[0_0_14px_rgb(242_165_65/0.9)] transition-all duration-300"
+                    style={{ left: `${progressPercent}%` }}
+                  />
+                </div>
+                <span className="w-10 shrink-0 font-mono text-[11px] text-white/50 tabular-nums sm:w-12 sm:text-xs">
+                  {formatClock(activeMovie.durationSeconds)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
+      </FadeIn>
 
-        <CardContent className="p-4 border-t border-zinc-800 bg-zinc-950">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Segment Status</h3>
-            <span className="text-xs text-slate-600">
+      <FadeIn delay={0.14}>
+        <section className="glass rounded-3xl p-5 sm:p-6" aria-labelledby="segment-status-heading">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+            <h3 id="segment-status-heading" className="text-sm font-semibold tracking-[0.2em] text-white/80 uppercase">
+              Segment Status
+            </h3>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-muted-foreground">
+              <span aria-hidden="true" className={`size-1.5 rounded-full ${manifest ? "bg-mint" : "animate-pulse bg-sky-300"}`} />
               Manifest: {manifest ? new Date(manifest.preparedAt).toLocaleTimeString() : "Preparing"}
             </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {displaySegments.filter((segment) => segment.type === "ADAPTIVE").map((segment) => (
-              <SegmentStatusCard
-                key={segment.id}
-                segment={segment}
-                job={jobs.find((candidate) => candidate.slotId === segment.slotId)}
-                adSlot={adSlots.find((slot) => slot.slotId === segment.slotId)}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          {adaptiveSegments.length === 0 && !manifest ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3" aria-hidden="true">
+              {[0, 1, 2].map((placeholder) => (
+                <div key={placeholder} className="shimmer-bg animate-shimmer h-28 rounded-2xl border border-white/10 bg-white/[0.03]" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+              {adaptiveSegments.map((segment) => (
+                <SegmentStatusCard
+                  key={segment.id}
+                  segment={segment}
+                  job={jobs.find((candidate) => candidate.slotId === segment.slotId)}
+                  adSlot={adSlots.find((slot) => slot.slotId === segment.slotId)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </FadeIn>
     </main>
   );
 }

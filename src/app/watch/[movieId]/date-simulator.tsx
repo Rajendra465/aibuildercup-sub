@@ -2,7 +2,8 @@
 
 import { ChangeEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CalendarDays } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CalendarDays, RotateCcw } from "lucide-react";
 
 interface DateSimulatorProps {
   date: string | null;
@@ -29,25 +30,41 @@ export function DateSimulator({ date, seasonLabels }: DateSimulatorProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs">
-      <label className="inline-flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-slate-400">
-        <CalendarDays className="size-3.5 text-[#F2A541]" />
-        Simulate date
+      <label className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-muted-foreground transition-colors focus-within:border-amber/50 focus-within:ring-3 focus-within:ring-amber/20 hover:border-white/25">
+        <CalendarDays className="size-3.5 text-amber" aria-hidden="true" />
+        <span className="font-medium text-white/80">Simulate date</span>
         <input
           type="date"
           value={date ?? ""}
           onChange={handleChange}
-          className="bg-transparent text-slate-200 outline-none [color-scheme:dark]"
+          className="rounded-md bg-transparent text-white outline-none [color-scheme:dark]"
         />
       </label>
-      {date && (
-        <button type="button" onClick={() => applyDate(null)} className="text-slate-500 hover:text-slate-300">
-          Reset to today
-        </button>
-      )}
+      <AnimatePresence initial={false}>
+        {date && (
+          <motion.button
+            key="reset-date"
+            type="button"
+            onClick={() => applyDate(null)}
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -6 }}
+            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-white/5 hover:text-white focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <RotateCcw className="size-3" aria-hidden="true" />
+            Reset to today
+          </motion.button>
+        )}
+      </AnimatePresence>
       {seasonLabels.map((label) => (
-        <span key={label} className="rounded-full border border-[#F2A541]/40 bg-[#F2A541]/10 px-2 py-0.5 text-[#F2A541]">
+        <motion.span
+          key={label}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-full border border-amber/40 bg-amber/10 px-3 py-1 font-medium text-amber shadow-[0_0_20px_-6px_rgb(242_165_65/0.6)]"
+        >
           {label}
-        </span>
+        </motion.span>
       ))}
     </div>
   );

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { Clapperboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,30 +34,37 @@ export function SiteNav() {
   const current = activeHref(pathname);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/85 backdrop-blur supports-backdrop-filter:bg-zinc-950/70">
+    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-6">
       <nav
         aria-label="Primary"
-        className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6"
+        className="glass-strong mx-auto flex max-w-7xl items-center gap-4 rounded-2xl px-3 py-2 sm:px-4"
       >
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold tracking-tight text-white">
-          <Clapperboard className="size-5 text-[#F2A541]" aria-hidden="true" />
+        <Link href="/" className="group flex shrink-0 items-center gap-2 font-display text-lg font-bold tracking-tight text-white">
+          <span className="relative flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-amber to-violet shadow-[0_0_24px_rgb(242_165_65/0.45)] transition-transform group-hover:rotate-6">
+            <Clapperboard className="size-4 text-ink" aria-hidden="true" />
+          </span>
           <span>
-            In<span className="text-[#F2A541]">Scene</span>
+            In<span className="text-gradient">Scene</span>
           </span>
         </Link>
         <ul className="-mx-1 flex min-w-0 flex-1 items-center gap-1 overflow-x-auto px-1 text-sm [scrollbar-width:none]">
           {NAV_ITEMS.map((item) => {
             const isActive = item.href === current;
             return (
-              <li key={item.href} className="shrink-0">
+              <li key={item.href} className="relative shrink-0">
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-xl bg-amber/15 ring-1 ring-amber/40"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
                 <Link
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "block rounded-md px-2.5 py-1.5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#F2A541]/60",
-                    isActive
-                      ? "bg-[#F2A541]/15 text-[#F2A541]"
-                      : "text-slate-300 hover:bg-white/5 hover:text-white",
+                    "relative block rounded-xl px-3 py-1.5 font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-amber/60",
+                    isActive ? "text-amber" : "text-slate-300 hover:text-white",
                   )}
                 >
                   {item.label}

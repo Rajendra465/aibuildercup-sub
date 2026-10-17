@@ -1,41 +1,35 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { allMovies } from "@/lib/data/studio-store";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/fx/motion";
+import { MoviePosterGrid } from "./movie-poster-grid";
+
+function watchHref(movieId: string): string {
+  return `/watch/${movieId}`;
+}
 
 export default function WatchIndexPage() {
   const movies = allMovies();
 
   return (
-    <main className="min-h-screen p-8 max-w-5xl mx-auto">
-      <div className="mb-12 text-center">
-        <Link href="/" className="text-indigo-400 hover:text-indigo-300 text-sm mb-4 inline-block">
-          &larr; Back to Home
-        </Link>
-        <h1 className="text-4xl font-bold tracking-tight">Watch Personalized Cut</h1>
-        <p className="text-slate-400 mt-2">Choose a project, then select a viewer profile.</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {movies.map((movie) => (
-          <Card key={movie.id} className="bg-zinc-900 border-zinc-800">
-            <CardHeader>
-              <CardTitle className="text-xl text-slate-100">{movie.title}</CardTitle>
-              <CardDescription className="text-slate-400">
-                Duration: {movie.durationSeconds}s · {movie.status}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-300 mb-6 line-clamp-3">
-                {movie.description || "No description yet."}
-              </p>
-              <Link href={`/watch/${movie.id}`} className={buttonVariants({ className: "w-full rounded" })}>
-                Choose profile
-              </Link>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <main className="mx-auto min-h-screen max-w-6xl px-4 py-10 sm:px-8 sm:py-14">
+      <Link
+        href="/"
+        className="mb-6 inline-flex items-center gap-1.5 rounded-lg text-sm text-muted-foreground transition-colors hover:text-white focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        Back to Home
+      </Link>
+      <PageHeader
+        kicker="Now streaming"
+        title={
+          <>
+            Watch a <span className="text-gradient">personalized cut</span>
+          </>
+        }
+        lede="Choose a project, then pick a viewer profile. Every profile gets its own scene-aware placements."
+      />
+      <MoviePosterGrid movies={movies} hrefFor={watchHref} ctaLabel="Choose profile" />
     </main>
   );
 }
