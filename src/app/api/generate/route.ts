@@ -4,7 +4,7 @@ import { allMovies, slotsForMovie } from "@/lib/data/studio-store";
 import { GenerationQueue } from "@/lib/jobs/generation-queue";
 import { VideoGenerationService } from "@/lib/ai/video-generation.service";
 import { GenerationJob } from "@/lib/types";
-import { exportPlaybackFragmentForAsset } from "@/lib/playback/fragment-export";
+import { exportPlaybackFragmentForAsset, publicPathForPlaybackFragment } from "@/lib/playback/fragment-export";
 import { AdDecision } from "@/lib/types";
 import { decideForSlot, ensureSceneProfile, resolveNow } from "@/lib/ads/campaign-store";
 import { measureExposure } from "@/lib/ads/exposure";
@@ -130,7 +130,10 @@ export async function POST(req: NextRequest) {
 
       if (fileExists) {
         const videoAssetUrl = `/media/generated/${fileName}`;
-        await exportPlaybackFragmentForAsset(videoAssetUrl);
+        // Never rewrite a fragment a viewer may be streaming right now; only create it when missing.
+        if (!fs.existsSync(publicPathForPlaybackFragment(videoAssetUrl))) {
+          await exportPlaybackFragmentForAsset(videoAssetUrl);
+        }
         // If file exists, ensure there is a READY job associated with it
         if (!job || job.status !== "READY") {
           job = {

@@ -30,6 +30,38 @@ function playableAdJobs(jobs: GenerationJob[], slots: AdaptiveSlot[], profile: V
   });
 }
 
+/**
+ * Pre-rendered cuts on disk play even before the in-memory queue knows about them
+ * (e.g. right after a restart), so a viewer's very first play already shows their ad.
+ */
+function cachedDiskJobs(movieId: string, slots: AdaptiveSlot[], profile: ViewerProfile, now: Date, known: GenerationJob[]) {
+  return slots.flatMap((slot): GenerationJob[] => {
+    if (known.some((job) => job.slotId === slot.id && job.status === "READY")) return [];
+    const isAd = slot.type === "ADSPOT_BILLBOARD";
+    if (isAd && policyForSlot(slot).requireApproval) return [];
+    const adKey = isAd ? decideForSlot(slot, profile, now).adKey : undefined;
+    const jobId = `job-${movieId}-${slot.id}-${profile.id}${adKey ? `-${adKey}` : ""}`;
+    const videoAssetUrl = `/media/generated/${jobId}.mp4`;
+    if (!publicAssetExists(videoAssetUrl)) return [];
+    const timestamp = now.toISOString();
+    return [{
+      id: jobId,
+      movieId,
+      slotId: slot.id,
+      profileId: profile.id,
+      profileSnapshot: profile,
+      adKey,
+      status: "READY",
+      videoAssetUrl,
+      cacheKey: `${slot.id}-${profile.locale}-${profile.city}`,
+      approved: false,
+      startedAt: timestamp,
+      createdAt: timestamp,
+      completedAt: timestamp,
+    }];
+  });
+}
+
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
@@ -45,7 +77,9 @@ export async function GET(req: NextRequest) {
     const profile = seedProfiles.find((candidate) => candidate.id === profileId);
     const slots = slotsForMovie(movie.id);
     const profileJobs = profileId ? allJobs.filter((job) => job.movieId === movie.id && job.profileId === profileId) : [];
-    const jobs = profile ? playableAdJobs(profileJobs, slots, profile, resolveNow(url.searchParams.get("date"))) : profileJobs;
+    const now = resolveNow(url.searchParams.get("date"));
+    const liveJobs = profile ? playableAdJobs(profileJobs, slots, profile, now) : profileJobs;
+    const jobs = profile ? [...liveJobs, ...cachedDiskJobs(movie.id, slots, profile, now, liveJobs)] : liveJobs;
     const manifest = buildPlaybackManifest({ movie, slots, jobs, assetExists: publicAssetExists });
 
     return NextResponse.json({ success: true, manifest });

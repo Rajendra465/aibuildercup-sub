@@ -8,8 +8,13 @@ export const seedProfiles: ViewerProfile[] = [
     "country": "France",
     "locale": "fr-FR",
     "languageLabel": "French",
-    "culturalContext": ["Parisian street life"],
-    "accessibility": { "highContrastText": false, "simplifiedVisualClues": false },
+    "culturalContext": [
+      "Parisian street life"
+    ],
+    "accessibility": {
+      "highContrastText": false,
+      "simplifiedVisualClues": false
+    },
     "adPreference": "standard"
   },
   {
@@ -19,8 +24,13 @@ export const seedProfiles: ViewerProfile[] = [
     "country": "France",
     "locale": "fr-FR",
     "languageLabel": "French",
-    "culturalContext": ["family profile"],
-    "accessibility": { "highContrastText": false, "simplifiedVisualClues": false },
+    "culturalContext": [
+      "family profile"
+    ],
+    "accessibility": {
+      "highContrastText": false,
+      "simplifiedVisualClues": false
+    },
     "adPreference": "kids"
   },
   {
@@ -30,8 +40,13 @@ export const seedProfiles: ViewerProfile[] = [
     "country": "United States",
     "locale": "en-US",
     "languageLabel": "English",
-    "culturalContext": ["premium plan"],
-    "accessibility": { "highContrastText": false, "simplifiedVisualClues": false },
+    "culturalContext": [
+      "premium plan"
+    ],
+    "accessibility": {
+      "highContrastText": false,
+      "simplifiedVisualClues": false
+    },
     "adPreference": "ad_free"
   },
   {
@@ -100,188 +115,207 @@ export const seedProfiles: ViewerProfile[] = [
 ];
 
 export const seedMovie: Movie = {
-  "id": "billboards-1783764076569",
-  "title": "Billboards",
-  "description": "What if Ad Campaigns were dynamic?",
-  "durationSeconds": 53.345,
-  "canonicalVideoUrl": "/media/uploads/billboards-1783764076569/billboards-1783764076569.mp4",
+  "id": "night-billboard-1792268345989",
+  "title": "Night Billboard",
+  "description": "A lone billboard above a city highway after dark.",
+  "durationSeconds": 15,
+  "canonicalVideoUrl": "/media/uploads/night-billboard-1792268345989/night-billboard-1792268345989.mp4",
   "manifestVersion": 1,
   "promptVersion": 1,
   "status": "draft",
-  "createdAt": "2026-07-11T10:01:16.805Z",
-  "updatedAt": "2026-07-11T10:01:16.805Z"
+  "createdAt": "2026-10-17T20:19:06.137Z",
+  "updatedAt": "2026-10-17T20:19:06.137Z"
 };
 
 export const seedMovies: Movie[] = [
   {
-    "id": "billboards-1783764076569",
-    "title": "Billboards",
-    "description": "What if Ad Campaigns were dynamic?",
-    "durationSeconds": 53.345,
-    "canonicalVideoUrl": "/media/uploads/billboards-1783764076569/billboards-1783764076569.mp4",
+    "id": "night-billboard-1792268345989",
+    "title": "Night Billboard",
+    "description": "A lone billboard above a city highway after dark.",
+    "durationSeconds": 15,
+    "canonicalVideoUrl": "/media/uploads/night-billboard-1792268345989/night-billboard-1792268345989.mp4",
     "manifestVersion": 1,
     "promptVersion": 1,
     "status": "draft",
-    "createdAt": "2026-07-11T10:01:16.805Z",
-    "updatedAt": "2026-07-11T10:01:16.805Z"
+    "createdAt": "2026-10-17T20:19:06.137Z",
+    "updatedAt": "2026-10-17T20:19:06.137Z"
   },
   {
-    "id": "hotel-mystery-001",
-    "title": "Dhurandhar",
-    "description": "Ishq Jalakar",
-    "durationSeconds": 33,
-    "canonicalVideoUrl": "/media/canonical-full.mp4",
+    "id": "times-square-in-the-rain-1792268342537",
+    "title": "Times Square in the Rain",
+    "description": "Neon, taxis and umbrellas on a wet night in Manhattan.",
+    "durationSeconds": 19,
+    "canonicalVideoUrl": "/media/uploads/times-square-in-the-rain-1792268342537/times-square-in-the-rain-1792268342537.mp4",
     "manifestVersion": 1,
     "promptVersion": 1,
-    "status": "ready",
-    "createdAt": "2026-07-11T07:03:58.779Z",
-    "updatedAt": "2026-07-11T07:03:58.779Z"
+    "status": "draft",
+    "createdAt": "2026-10-17T20:19:02.705Z",
+    "updatedAt": "2026-10-17T20:19:02.705Z"
+  },
+  {
+    "id": "midtown-daylight-1792268338920",
+    "title": "Midtown Daylight",
+    "description": "A busy Times Square afternoon framed by giant screens.",
+    "durationSeconds": 30,
+    "canonicalVideoUrl": "/media/uploads/midtown-daylight-1792268338920/midtown-daylight-1792268338920.mp4",
+    "manifestVersion": 1,
+    "promptVersion": 1,
+    "status": "draft",
+    "createdAt": "2026-10-17T20:18:59.057Z",
+    "updatedAt": "2026-10-17T20:18:59.057Z"
   }
 ];
 
 export const seedSlots: AdaptiveSlot[] = [
   {
-    "id": "slot-custom-1783764413824",
-    "movieId": "billboards-1783764076569",
-    "label": "Billboard 2",
-    "type": "LOCALIZED_PROP",
-    "startSeconds": 9.495,
-    "endSeconds": 13.41,
-    "generationLeadSeconds": 30,
-    "generationDeadlineSeconds": 5,
-    "narrativePurpose": "A billboard that is left intentionally blank to fill in ad campaigns",
-    "editableFields": [
-      "the billboard"
-    ],
-    "immutableFacts": [
-      "rest of the scene",
-      "colour grading",
-      "field"
-    ],
-    "prohibitedChanges": [],
-    "visualConstraints": {
-      "preserveDuration": true,
-      "preserveCameraMotion": false,
-      "preserveLighting": false,
-      "preserveCharacters": false,
-      "preserveForegroundObjects": false
-    },
-    "supportedLocales": [
-      "en-US",
-      "te-IN",
-      "ja-JP",
-      "fr-FR"
-    ],
-    "canonicalFallbackUrl": "/media/fallbacks/slot-custom-1783764413824-generic.mp4",
-    "generationStrategy": "IMAGE_THEN_VIDEO",
-    "isEnabled": true
-  },
-  {
-    "id": "slot-custom-1783764299331",
-    "movieId": "billboards-1783764076569",
-    "label": "Billboard 1",
+    "id": "slot-scout-1792268606678",
+    "movieId": "midtown-daylight-1792268338920",
+    "label": "Taxi rear panel",
     "type": "ADSPOT_BILLBOARD",
-    "startSeconds": 0,
-    "endSeconds": 4.514,
+    "startSeconds": 3,
+    "endSeconds": 7,
     "generationLeadSeconds": 30,
     "generationDeadlineSeconds": 5,
-    "narrativePurpose": "An open billboard spot to advertise or convey a media campaign.",
+    "narrativePurpose": "Rear window and trunk area of the yellow taxi driving directly ahead in the center lane",
     "editableFields": [
-      "the billboard"
+      "taxi roof ad sign",
+      "rear bumper sticker or logo"
     ],
     "immutableFacts": [
-      "rest of the scene",
-      "colour grading",
-      "field"
+      "Yellow NYC taxi color",
+      "License plate location",
+      "Surrounding street motion"
     ],
     "prohibitedChanges": [],
     "visualConstraints": {
       "preserveDuration": true,
-      "preserveCameraMotion": false,
-      "preserveLighting": false,
-      "preserveCharacters": false,
-      "preserveForegroundObjects": false
+      "preserveCameraMotion": true,
+      "preserveLighting": true,
+      "preserveCharacters": true,
+      "preserveForegroundObjects": true,
+      "maxProminence": 0.3
     },
-    "supportedLocales": [
-      "en-US",
-      "te-IN",
-      "ja-JP",
-      "fr-FR"
-    ],
-    "canonicalFallbackUrl": "/media/fallbacks/slot-custom-1783764299331-generic.mp4",
-    "generationStrategy": "IMAGE_THEN_VIDEO",
+    "adPolicy": {
+      "blockedCategories": [],
+      "maxProminence": 0.3,
+      "requireApproval": false
+    },
+    "supportedLocales": [],
+    "canonicalFallbackUrl": "/media/fallbacks/slot-scout-1792268606678-generic.mp4",
+    "generationStrategy": "VIDEO_EDIT",
     "isEnabled": true
   },
   {
-    "id": "slot-custom-1783753927541",
-    "movieId": "hotel-mystery-001",
-    "label": "Entering the city",
-    "type": "LOCALIZED_PROP",
-    "startSeconds": 22.507,
-    "endSeconds": 24.255,
+    "id": "slot-scout-1792268600268",
+    "movieId": "midtown-daylight-1792268338920",
+    "label": "Midtown billboard",
+    "type": "ADSPOT_BILLBOARD",
+    "startSeconds": 7.5,
+    "endSeconds": 10.5,
     "generationLeadSeconds": 30,
     "generationDeadlineSeconds": 5,
-    "narrativePurpose": "Spy entering the city where he is supposed to execute his operation. ",
+    "narrativePurpose": "Large illuminated billboard high on the building facade on the left side of the street",
     "editableFields": [
-      "welcome board",
-      "place name"
+      "billboard ad content",
+      "text and graphics"
     ],
     "immutableFacts": [
-      "locaiton of the scene",
-      "people"
+      "Building architecture structure",
+      "Illumination frame boundaries"
     ],
     "prohibitedChanges": [],
     "visualConstraints": {
       "preserveDuration": true,
-      "preserveCameraMotion": false,
-      "preserveLighting": false,
-      "preserveCharacters": false,
-      "preserveForegroundObjects": false
+      "preserveCameraMotion": true,
+      "preserveLighting": true,
+      "preserveCharacters": true,
+      "preserveForegroundObjects": true,
+      "maxProminence": 0.35
     },
-    "supportedLocales": [
-      "en-US",
-      "te-IN",
-      "ja-JP",
-      "fr-FR"
-    ],
-    "canonicalFallbackUrl": "/media/fallbacks/slot-custom-1783753927541-generic.mp4",
-    "generationStrategy": "IMAGE_THEN_VIDEO",
+    "adPolicy": {
+      "blockedCategories": [],
+      "maxProminence": 0.35,
+      "requireApproval": false
+    },
+    "supportedLocales": [],
+    "canonicalFallbackUrl": "/media/fallbacks/slot-scout-1792268600268-generic.mp4",
+    "generationStrategy": "VIDEO_EDIT",
     "isEnabled": true
   },
   {
-    "id": "slot-custom-1783753812630",
-    "movieId": "hotel-mystery-001",
-    "label": "Helicopter",
-    "type": "LOCALIZED_PROP",
-    "startSeconds": 11.966,
-    "endSeconds": 13.507,
+    "id": "slot-scout-1792268593904",
+    "movieId": "times-square-in-the-rain-1792268342537",
+    "label": "Times Square screen",
+    "type": "ADSPOT_BILLBOARD",
+    "startSeconds": 4,
+    "endSeconds": 9,
     "generationLeadSeconds": 30,
     "generationDeadlineSeconds": 5,
-    "narrativePurpose": "a spy boarding a helicopter in enemy territory. ",
+    "narrativePurpose": "Large digital billboard screen on the upper right building facade in Times Square",
     "editableFields": [
-      "tail number",
-      "logo",
-      "flag"
+      "billboard display content",
+      "video advertisement"
     ],
     "immutableFacts": [
-      "rest of the scene"
+      "building structure",
+      "surrounding neon lights",
+      "rainy street scene below"
     ],
     "prohibitedChanges": [],
     "visualConstraints": {
       "preserveDuration": true,
-      "preserveCameraMotion": false,
-      "preserveLighting": false,
-      "preserveCharacters": false,
-      "preserveForegroundObjects": false
+      "preserveCameraMotion": true,
+      "preserveLighting": true,
+      "preserveCharacters": true,
+      "preserveForegroundObjects": true,
+      "maxProminence": 0.35
     },
-    "supportedLocales": [
-      "en-US",
-      "te-IN",
-      "ja-JP",
-      "fr-FR"
+    "adPolicy": {
+      "blockedCategories": [],
+      "maxProminence": 0.35,
+      "requireApproval": false
+    },
+    "supportedLocales": [],
+    "canonicalFallbackUrl": "/media/fallbacks/slot-scout-1792268593904-generic.mp4",
+    "generationStrategy": "VIDEO_EDIT",
+    "isEnabled": true
+  },
+  {
+    "id": "slot-scout-1792268587530",
+    "movieId": "night-billboard-1792268345989",
+    "label": "Highway billboard",
+    "type": "ADSPOT_BILLBOARD",
+    "startSeconds": 3,
+    "endSeconds": 8,
+    "generationLeadSeconds": 30,
+    "generationDeadlineSeconds": 5,
+    "narrativePurpose": "Large blank illuminated billboard beside a highway overpass at night",
+    "editableFields": [
+      "billboard content",
+      "billboard display"
     ],
-    "canonicalFallbackUrl": "/media/fallbacks/slot-custom-1783753812630-generic.mp4",
-    "generationStrategy": "IMAGE_THEN_VIDEO",
+    "immutableFacts": [
+      "billboard metal frame structure",
+      "overhead floodlights illuminating the frame",
+      "nighttime city highway environment"
+    ],
+    "prohibitedChanges": [],
+    "visualConstraints": {
+      "preserveDuration": true,
+      "preserveCameraMotion": true,
+      "preserveLighting": true,
+      "preserveCharacters": true,
+      "preserveForegroundObjects": true,
+      "maxProminence": 0.45
+    },
+    "adPolicy": {
+      "blockedCategories": [],
+      "maxProminence": 0.45,
+      "requireApproval": false
+    },
+    "supportedLocales": [],
+    "canonicalFallbackUrl": "/media/fallbacks/slot-scout-1792268587530-generic.mp4",
+    "generationStrategy": "VIDEO_EDIT",
     "isEnabled": true
   }
 ];
