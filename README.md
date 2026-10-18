@@ -8,6 +8,7 @@
 |---|---|
 | **Live prototype** | https://inscene-755276882523.us-central1.run.app |
 | **Demo video** | https://youtu.be/Os0ZW7ywv_M |
+| **Pitch deck** | [docs/InScene-Berkians-Pitch-Deck.pdf](docs/InScene-Berkians-Pitch-Deck.pdf) |
 | **Built for** | Google Cloud AI Builder Cup 2026 · Media, Content & Digital Experiences |
 | **Team Berkians** | Rajendra Sarpal · Sparsh Srivastava |
 
@@ -208,4 +209,7 @@ npx firebase-tools projects:addfirebase "$PROJECT_ID"   # optional: link the pro
 
 ## Pitch deck
 
-Open [`docs/pitch-deck.html`](docs/pitch-deck.html) in a browser. Arrow keys or clicks move between slides, `N` shows speaker notes, `F` goes full screen, and printing saves it as a PDF.
+**[📄 InScene: Team Berkians pitch deck (PDF)](docs/InScene-Berkians-Pitch-Deck.pdf)**, the AI Builder Cup submission deck:
+problem, solution, features, process flow, architecture, technologies, cost, prototype snapshots, benchmarks and roadmap.
+
+An earlier interactive HTML version is in [`docs/pitch-deck.html`](docs/pitch-deck.html). Open it in a browser; arrow keys or clicks move between slides, `N` shows speaker notes and `F` goes full screen.
