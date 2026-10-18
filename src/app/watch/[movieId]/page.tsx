@@ -89,6 +89,7 @@ function NotFoundPanel({ message }: { message: string }) {
 type PlaybackMode = "MSE" | "DUAL_VIDEO_FALLBACK" | "MSE_ERROR";
 
 const MSE_ROLLING_AHEAD_SEGMENTS = 2;
+const RENDERING_STATUSES: GenerationJob["status"][] = ["QUEUED", "GENERATING_IMAGE", "IMAGE_READY", "GENERATING_VIDEO", "VALIDATING"];
 
 export default function WatchMoviePage() {
   const params = useParams();
@@ -129,6 +130,12 @@ export default function WatchMoviePage() {
   const [error, setError] = useState<string | null>(null);
   const [playbackMode, setPlaybackMode] = useState<PlaybackMode>("MSE");
   const [mseReady, setMseReady] = useState(false);
+  // Bumped to rebuild the MediaSource once a fresh render lands, so the new cut plays without a reload.
+  const [mseEpoch, setMseEpoch] = useState(0);
+  const [renderStartedAt, setRenderStartedAt] = useState<number | null>(null);
+  const [renderElapsed, setRenderElapsed] = useState(0);
+  const wasRenderingRef = useRef(false);
+  const isRendering = jobs.some((job) => RENDERING_STATUSES.includes(job.status));
 
   const { slots: adSlots } = useAdDecisions(movieId, profileId, simulatedDate);
   const { activeSlot, showPauseCard, logClick, logAudioPlay } = useAdTracking({
@@ -250,6 +257,34 @@ export default function WatchMoviePage() {
 
     return () => clearInterval(interval);
   }, [fetchManifest, movieId, profileId]);
+
+  // When this viewer's render finishes, reload the manifest and rebuild the player around the new cut.
+  useEffect(() => {
+    if (isRendering && !wasRenderingRef.current) {
+      setRenderStartedAt(Date.now());
+    }
+    if (!isRendering && wasRenderingRef.current) {
+      setRenderStartedAt(null);
+      setIsPlaying(false);
+      fetchManifest("replace")
+        .then(() => {
+          setCurrentSegmentIndex(0);
+          setActivePlayerIndex(0);
+          setTimelineTime(0);
+          setPlaybackMode("MSE");
+          playbackModeRef.current = "MSE";
+          setMseEpoch((epoch) => epoch + 1);
+        })
+        .catch((err) => setError(String(err)));
+    }
+    wasRenderingRef.current = isRendering;
+  }, [fetchManifest, isRendering]);
+
+  useEffect(() => {
+    if (renderStartedAt === null) return;
+    const tick = setInterval(() => setRenderElapsed(Math.round((Date.now() - renderStartedAt) / 1000)), 1000);
+    return () => clearInterval(tick);
+  }, [renderStartedAt]);
 
   const processMseAppendQueue = useCallback(async () => {
     if (mseAppendingRef.current) return;
@@ -378,7 +413,7 @@ export default function WatchMoviePage() {
         mseObjectUrlRef.current = null;
       }
     };
-  }, [firstMseMimeType, queueMseSegmentsThrough, switchToDualVideoFallback]);
+  }, [firstMseMimeType, mseEpoch, queueMseSegmentsThrough, switchToDualVideoFallback]);
 
   useEffect(() => {
     if (playbackMode !== "MSE" || !mseReady) return;
@@ -600,6 +635,20 @@ export default function WatchMoviePage() {
               </div>
             )}
 
+            {displayCurrentSegment && isRendering && (
+              <div
+                role="status"
+                className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-ink/75 text-center backdrop-blur-sm"
+              >
+                <LoaderCircle className="size-9 animate-spin text-amber" aria-hidden="true" />
+                <p className="text-lg font-semibold text-white">Gemini is painting your scene</p>
+                <p className="max-w-sm px-6 text-sm text-muted-foreground">
+                  A personalised cut for {activeProfile.displayName} is rendering. It usually takes about 90 seconds and plays here automatically.
+                </p>
+                <span className="font-mono text-xs text-white/60 tabular-nums">{formatClock(renderElapsed)} elapsed</span>
+              </div>
+            )}
+
             <div className="pointer-events-none absolute top-4 left-4 rounded-full border border-white/10 bg-black/45 px-3 py-1 font-mono text-[11px] text-white/60 backdrop-blur-md">
               Segment: {displayCurrentSegment?.source || "LOADING"} ({displaySegments.length ? currentSegmentIndex + 1 : 0}/{displaySegments.length}) · {playbackMode}
             </div>
@@ -641,7 +690,7 @@ export default function WatchMoviePage() {
                   type="button"
                   className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-[0_0_24px_-4px_rgb(255_255_255/0.6)] transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-amber/60 focus-visible:outline-none active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
                   onClick={() => setIsPlaying((value) => !value)}
-                  disabled={!displayCurrentSegment}
+                  disabled={!displayCurrentSegment || isRendering}
                   aria-label={displayIsPlaying ? "Pause" : "Play"}
                 >
                   {displayIsPlaying ? <Pause className="size-4 fill-current" /> : <Play className="ml-0.5 size-4 fill-current" />}

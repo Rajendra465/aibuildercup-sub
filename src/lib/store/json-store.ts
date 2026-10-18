@@ -1,10 +1,11 @@
 import fs from "fs";
 import path from "path";
+import { mirrorCollection } from "./firestore-sync";
 
 /**
  * Tiny JSON-file collection store. Each collection is one array in
- * `${DATA_DIR}/<name>.json`. Good enough for a single Cloud Run instance or
- * local dev; swap for Firestore when traffic needs it.
+ * `${DATA_DIR}/<name>.json`, used as a per-instance cache. Writes are mirrored to
+ * Cloud Firestore when enabled (see firestore-sync.ts).
  */
 export function dataDir(): string {
   return process.env.DATA_DIR || path.join(process.cwd(), "data");
@@ -30,12 +31,18 @@ export function readCollection<T>(name: string, fallback: readonly T[] = []): T[
   }
 }
 
-export function writeCollection<T>(name: string, items: readonly T[]): void {
+/** Writes the local cache only; used when hydrating from Firestore. */
+export function writeLocalCollection<T>(name: string, items: readonly T[]): void {
   const filePath = collectionPath(name);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   const tmpPath = `${filePath}.tmp`;
   fs.writeFileSync(tmpPath, JSON.stringify(items, null, 2));
   fs.renameSync(tmpPath, filePath);
+}
+
+export function writeCollection<T>(name: string, items: readonly T[]): void {
+  writeLocalCollection(name, items);
+  mirrorCollection(name, items);
 }
 
 export function appendToCollection<T>(name: string, item: T, fallback: readonly T[] = []): T[] {
