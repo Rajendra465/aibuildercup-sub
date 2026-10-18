@@ -35,7 +35,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "==> Enabling required APIs in ${PROJECT_ID}"
 gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com \
-  secretmanager.googleapis.com --project "${PROJECT_ID}"
+  secretmanager.googleapis.com firestore.googleapis.com --project "${PROJECT_ID}"
 
 if ! gcloud artifacts repositories describe "${REPOSITORY}" --location "${REGION}" --project "${PROJECT_ID}" >/dev/null 2>&1; then
   echo "==> Creating Artifact Registry repository ${REPOSITORY}"
@@ -54,13 +54,16 @@ PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format='value(proje
 RUNTIME_SA="${RUNTIME_SA:-${PROJECT_NUMBER}-compute@developer.gserviceaccount.com}"
 gcloud secrets add-iam-policy-binding "${GEMINI_SECRET}" --project "${PROJECT_ID}" \
   --member "serviceAccount:${RUNTIME_SA}" --role roles/secretmanager.secretAccessor >/dev/null
+# ...and read/write Firestore through the Firebase Admin SDK.
+gcloud projects add-iam-policy-binding "${PROJECT_ID}" --member "serviceAccount:${RUNTIME_SA}" \
+  --role roles/datastore.user --condition=None >/dev/null
 
 echo "==> Building ${IMAGE} with Cloud Build"
 gcloud builds submit "${ROOT_DIR}" --tag "${IMAGE}" --project "${PROJECT_ID}" --timeout=1800s
 
-ENV_VARS="DATA_DIR=/app/data"
+ENV_VARS="DATA_DIR=/app/data,FIRESTORE_ENABLED=1,GOOGLE_CLOUD_PROJECT=${PROJECT_ID}"
 if [[ "${GOOGLE_GENAI_USE_VERTEXAI:-}" == "true" ]]; then
-  ENV_VARS+=",GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION:-${REGION}}"
+  ENV_VARS+=",GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION:-${REGION}}"
 fi
 if [[ -n "${INSCENE_ANALYSIS_MODEL:-}" ]]; then
   ENV_VARS+=",INSCENE_ANALYSIS_MODEL=${INSCENE_ANALYSIS_MODEL}"
@@ -69,7 +72,7 @@ if [[ -n "${INSCENE_TTS_MODEL:-}" ]]; then
   ENV_VARS+=",INSCENE_TTS_MODEL=${INSCENE_TTS_MODEL}"
 fi
 
-# Single instance: the generation queue is in memory and the store is local JSON.
+# One instance at most: the render queue runs in process. Scales to zero when idle; Firestore restores data on start.
 # No CPU throttling: Gemini renders keep running after the HTTP response returns.
 echo "==> Deploying ${SERVICE} to Cloud Run (${REGION})"
 gcloud run deploy "${SERVICE}" \
@@ -83,7 +86,7 @@ gcloud run deploy "${SERVICE}" \
   --cpu 2 \
   --timeout 900 \
   --no-cpu-throttling \
-  --min-instances 1 \
+  --min-instances 0 \
   --max-instances 1 \
   --set-env-vars "${ENV_VARS}" \
   --set-secrets "GEMINI_API_KEY=${GEMINI_SECRET}:latest"

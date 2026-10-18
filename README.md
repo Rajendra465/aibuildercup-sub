@@ -4,6 +4,13 @@
 >
 > AI-rendered, per-viewer, brand-safe, shoppable in-scene product placement. The director stays in control.
 
+| | |
+|---|---|
+| **Live prototype** | https://inscene-755276882523.us-central1.run.app |
+| **Demo video** | https://youtu.be/Os0ZW7ywv_M |
+| **Built for** | Google Cloud AI Builder Cup 2026 · Media, Content & Digital Experiences |
+| **Team Berkians** | Rajendra Sarpal · Sparsh Srivastava |
+
 ---
 
 ## The pitch
@@ -71,8 +78,30 @@ Player ──► /api/generate ──► job queue (in memory) ──► Gemini 
 - **Gemini analysis** (`INSCENE_ANALYSIS_MODEL`, default `gemini-3.5-flash`) handles Slot Scout, scene brand safety, exposure measurement and prompt writing for Omni. Videos go through the Gemini File API.
 - **Gemini TTS** (`INSCENE_TTS_MODEL`, default `gemini-2.5-flash-preview-tts`) generates the diegetic audio ads.
 - **Next.js 16** (App Router, standalone output) runs both the UI and the API routes. ffmpeg/ffprobe cut fallback segments and playback fragments.
-- **Storage**: a small JSON collection store under `DATA_DIR` holds campaigns, ad events and the scout/safety caches. Generated media lives under `public/media` and is served at runtime through `/api/media`. The store is written to be swapped for **Firestore** (and media for Cloud Storage) later.
-- **Cloud Run** hosts the container (see [Deploy](#deploy-to-google-cloud-run)).
+- **Storage**: a small JSON collection store under `DATA_DIR` is the fast, synchronous per-instance cache for campaigns, ad events and the scout/safety caches. Generated media lives under `public/media` and is served at runtime through `/api/media`.
+- **Cloud Firestore** (via the **Firebase Admin SDK**, `src/lib/store/firestore-sync.ts`) is the durable store when `FIRESTORE_ENABLED=1`. Every collection write and every render-job update is mirrored to Firestore in ordered batches, and `src/instrumentation.ts` hydrates each new instance from Firestore at startup, so campaigns, analytics events, scene analyses and job history survive restarts and scale-to-zero.
+- **Cloud Run** hosts the container (see [Deploy](#deploy-to-google-cloud-run)), built by **Cloud Build** into **Artifact Registry**; the Gemini key comes from **Secret Manager**.
+
+### Google Cloud, Firebase and Gemini at a glance
+
+| Service | What InScene uses it for |
+|---------|--------------------------|
+| **Cloud Run** | Runs the whole Next.js app: Director Studio, Brand Studio, ad decision engine, render queue and smart-player API. Scales to zero when idle. |
+| **Gemini 3.5 Flash** | Slot Scout, scene mood and brand safety, exposure scoring, and writing the Omni edit prompt. |
+| **Gemini Omni** | Repaints only the ad surface in the real footage, once per slot × campaign × audience segment. |
+| **Gemini 2.5 Flash TTS** | Localised diegetic audio ads. |
+| **Firebase Admin SDK + Cloud Firestore** | Durable campaigns, render jobs, ad and QR events (analytics), scene-safety and scout results. |
+| **Cloud Build · Artifact Registry · Secret Manager** | Container builds, image storage and the Gemini API key. |
+
+### Pre-rendered cuts and the rendering loader
+
+The deployed image ships with **26 pre-rendered Gemini Omni cuts** in `public/media/generated` across the three demo
+films and seven viewer profiles, so every demo viewer starts playback instantly. Two combinations (Bengaluru × Times
+Square, and San Francisco × Midtown slot 2) were blocked by Omni's content filter and fall back to the original scene.
+
+When a viewer opens a film whose cut does not exist yet (for example a newly uploaded film), the watch page shows a
+**"Gemini is painting your scene"** overlay with an elapsed timer. When the render finishes, the player rebuilds its
+MediaSource and plays the new cut without a page reload.
 
 Every Gemini step has a deterministic fallback, so the app runs end to end with no API key. It then uses heuristics,
 estimates and the canonical clips, and labels each result "heuristic" or "estimate" in the UI.
@@ -128,7 +157,8 @@ npm run dev                  # http://localhost:3000
 ```
 
 Environment variables (see `.env.example`): `GEMINI_API_KEY`, `GOOGLE_GENAI_USE_VERTEXAI`, `GOOGLE_CLOUD_PROJECT`,
-`GOOGLE_CLOUD_LOCATION`, `INSCENE_ANALYSIS_MODEL`, `INSCENE_TTS_MODEL`, `DATA_DIR`.
+`GOOGLE_CLOUD_LOCATION`, `INSCENE_ANALYSIS_MODEL`, `INSCENE_TTS_MODEL`, `DATA_DIR`, and `FIRESTORE_ENABLED=1` to mirror
+data to Firestore (uses Application Default Credentials, e.g. `gcloud auth application-default login` locally).
 
 ## Tests
 
@@ -151,15 +181,24 @@ printf '%s' "$GEMINI_API_KEY" | gcloud secrets create gemini-api-key --data-file
 PROJECT_ID=my-project REGION=us-central1 SERVICE=inscene ./scripts/deploy-cloud-run.sh
 ```
 
-The script enables the required APIs and creates the Artifact Registry repo. It grants the runtime service account access
-to the secret, then deploys with `--memory 2Gi --cpu 2 --timeout 900 --no-cpu-throttling --min-instances 1 --max-instances 1`.
-CPU stays on because Gemini renders keep running after the HTTP response returns. There is exactly one instance
-because the job queue is in memory and the store is local JSON.
+The script enables the required APIs (including Firestore) and creates the Artifact Registry repo. It grants the runtime
+service account access to the secret and to Firestore, then deploys with
+`--memory 2Gi --cpu 2 --timeout 900 --no-cpu-throttling --min-instances 0 --max-instances 1` and
+`FIRESTORE_ENABLED=1`. CPU stays on while an instance is up because Gemini renders keep running after the HTTP response
+returns. The service scales to zero when idle, and Firestore restores its data on the next start.
+
+One-time Firestore setup:
+
+```bash
+gcloud firestore databases create --location=us-central1 --type=firestore-native --project "$PROJECT_ID"
+npx firebase-tools projects:addfirebase "$PROJECT_ID"   # optional: link the project to Firebase
+```
 
 ## Limitations
 
-- **Single instance.** The generation queue is in memory and the JSON store and generated media are on the container's
-  local disk, so they reset when the instance is replaced. Moving them to Firestore and Cloud Storage would make it scale out.
+- **One render instance.** Data is durable in Firestore, but the render queue runs in process and newly rendered media is
+  written to the container's local disk, so cuts rendered at runtime are lost when the instance is replaced (the demo cuts
+  are baked into the image). Moving media to Cloud Storage and the queue to Cloud Tasks would let it scale out.
 - **Authoring is dev-time.** Films, slots and ad policies are written into `src/lib/data/seed.ts`, which is compiled into the
   build. Adding segments, accepting scout candidates and saving ad policies therefore works under `npm run dev`, not in the
   deployed container. Campaigns, events and caches live in the JSON store and do work in production.
